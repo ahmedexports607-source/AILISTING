@@ -69,6 +69,10 @@ async def get_status_checks():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Etsy integration
+from etsy_service import build_router as _build_etsy_router
+app.include_router(_build_etsy_router(lambda: db))
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

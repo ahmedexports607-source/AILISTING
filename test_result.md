@@ -101,3 +101,121 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Test the new Etsy integration endpoints on the running backend"
+
+backend:
+  - task: "Root endpoint GET /api/"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Endpoint returns correct response: {'message': 'Hello World'}. Status 200."
+
+  - task: "Status check endpoints (POST and GET /api/status)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Both POST and GET /api/status working correctly. POST creates status checks with client_name and timestamp. GET retrieves all status checks as list. Status 200 for both."
+
+  - task: "Etsy status endpoint GET /api/etsy/status"
+    implemented: true
+    working: true
+    file: "/app/backend/etsy_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Returns correct response: {'connected': false} when no connection exists. Status 200. MongoDB query working correctly."
+
+  - task: "Etsy connect endpoint GET /api/etsy/connect"
+    implemented: true
+    working: true
+    file: "/app/backend/etsy_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Returns auth_url with all required parameters: client_id=exrim1606tkej8alecztd70p, code_challenge_method=S256, state parameter, and redirect_uri pointing to /api/etsy/callback. MongoDB state record created successfully in db.etsy_oauth_states with _id (state), code_verifier, redirect_uri, and created_at timestamp. Status 200."
+
+  - task: "Etsy callback endpoint GET /api/etsy/callback"
+    implemented: true
+    working: true
+    file: "/app/backend/etsy_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Returns HTML page with error message when provided with fake/invalid state. HTMLResponse with 'Invalid or expired state' message. Status 200. Error handling working correctly."
+
+  - task: "Etsy disconnect endpoint POST /api/etsy/disconnect"
+    implemented: true
+    working: true
+    file: "/app/backend/etsy_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Returns {'ok': true} and successfully removes connection from MongoDB. Verified db.etsy_connections is empty for _id 'default' after disconnect. Status 200."
+
+  - task: "Etsy publish endpoint POST /api/etsy/publish (unauthorized)"
+    implemented: true
+    working: true
+    file: "/app/backend/etsy_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Correctly returns 401 Unauthorized with error message 'Etsy not connected' when attempting to publish without an active connection. Error handling working as expected."
+
+frontend:
+  - task: "Frontend testing not performed"
+    implemented: false
+    working: "NA"
+    file: ""
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Frontend testing was not requested and not performed per testing protocol."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+  last_test_date: "2026-08-06T11:50:44"
+
+test_plan:
+  current_focus:
+    - "All Etsy integration endpoints tested and verified"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "testing"
+    message: "Completed comprehensive testing of all Etsy integration endpoints. All 7 backend tests passed successfully. Verified: 1) Root endpoint /api/ working, 2) Status check endpoints (POST/GET) working, 3) Etsy status endpoint returns correct connection state, 4) Etsy connect endpoint generates proper OAuth URL with all required parameters and creates MongoDB state record, 5) Etsy callback handles invalid state correctly with HTML error page, 6) Etsy disconnect removes connection from MongoDB, 7) Etsy publish returns 401 when not connected. MongoDB verification confirmed: etsy_oauth_states collection contains state records with proper structure, etsy_connections collection is empty after disconnect. No errors found in backend logs. All endpoints functioning as expected."

@@ -18,7 +18,7 @@ export default function SalesChart({ data }) {
     const line = pts.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(' ');
     const areaPath = `${line} L${pts[pts.length - 1].x},${padT + h} L${pts[0].x},${padT + h} Z`;
     return { path: line, area: areaPath, points: pts };
-  }, [data]);
+  }, [data, w, h, padL, padT, max]);
 
   const yTicks = [0, 250, 500, 750, 1000];
   return (

@@ -36,8 +36,8 @@ export default function AIMemory() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((m, i) => (
-          <div key={i} className="rounded-xl subtle-card p-5">
+        {items.map((m) => (
+          <div key={`${m.tag}-${m.text.slice(0, 24)}`} className="rounded-xl subtle-card p-5">
             <div className="text-[10px] tracking-[0.22em] text-orange-500">{m.tag.toUpperCase()}</div>
             <div className="font-serif text-[17px] mt-2 text-neutral-100 leading-snug">{m.text}</div>
           </div>

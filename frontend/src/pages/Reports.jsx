@@ -28,7 +28,7 @@ export default function Reports() {
 
       <div className="space-y-3">
         {items.map((i, idx) => (
-          <div key={idx} className="rounded-xl subtle-card p-5">
+          <div key={`report-${i.title}-${idx}`} className="rounded-xl subtle-card p-5">
             <div className="flex items-center justify-between">
               <div className="font-serif text-lg text-neutral-100">{i.title}</div>
               <div className="text-[11px] tracking-[0.18em] text-neutral-500">{i.date}</div>

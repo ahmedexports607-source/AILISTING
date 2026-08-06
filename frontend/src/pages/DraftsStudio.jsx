@@ -15,7 +15,11 @@ export default function DraftsStudio() {
   const [published, setPublished] = useState({});
 
   useEffect(() => {
-    axios.get(`${API}/etsy/status`).then(r => setConnected(r.data.connected)).catch(() => setConnected(false));
+    let alive = true;
+    axios.get(`${API}/etsy/status`)
+      .then((r) => { if (alive) setConnected(r.data.connected); })
+      .catch(() => { if (alive) setConnected(false); });
+    return () => { alive = false; };
   }, []);
 
   const publish = async (d) => {

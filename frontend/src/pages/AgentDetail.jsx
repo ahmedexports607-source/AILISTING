@@ -65,8 +65,8 @@ export default function AgentDetail() {
 
       <div className="rounded-xl subtle-card p-5">
         <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'me' ? 'justify-end' : 'justify-start'}`}>
+        {messages.map((m, i) => (
+          <div key={`msg-${i}-${m.role}`} className={`flex ${m.role === 'me' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-[13px] leading-relaxed ${
                 m.role === 'me'
                   ? 'bg-orange-500 text-white rounded-br-sm'
@@ -78,7 +78,7 @@ export default function AgentDetail() {
 
         <div className="flex flex-wrap gap-2 mt-4">
           {suggestions.map((s) => (
-            <button key={s} onClick={() => send(s)} className="text-[12px] px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-neutral-400 hover:text-neutral-100 hover:border-orange-500/40 transition-colors">
+            <button key={`sugg-${s}`} onClick={() => send(s)} className="text-[12px] px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-neutral-400 hover:text-neutral-100 hover:border-orange-500/40 transition-colors">
               {s}
             </button>
           ))}

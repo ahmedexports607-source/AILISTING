@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Plug, Check, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -13,14 +13,14 @@ export default function Integrations() {
   const [busy, setBusy] = useState(false);
   const { toast } = useToast();
 
-  const refreshEtsy = async () => {
+  const refreshEtsy = useCallback(async () => {
     try {
       const { data } = await axios.get(`${API}/etsy/status`);
       setEtsy({ ...data, loading: false });
     } catch (e) {
       setEtsy({ connected: false, loading: false });
     }
-  };
+  }, []);
 
   useEffect(() => {
     refreshEtsy();
@@ -37,7 +37,7 @@ export default function Integrations() {
     };
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
-  }, []);
+  }, [refreshEtsy, toast]);
 
   const connectEtsy = async () => {
     setBusy(true);
@@ -68,6 +68,8 @@ export default function Integrations() {
   };
 
   const toggleLocal = (name) => setItems((prev) => prev.map((i) => i.name === name ? { ...i, connected: !i.connected } : i));
+
+  const otherItems = useMemo(() => items.filter((i) => i.name !== 'Etsy'), [items]);
 
   return (
     <div className="space-y-6">
@@ -109,7 +111,7 @@ export default function Integrations() {
         </div>
 
         {/* Other integrations (mock UI) */}
-        {items.filter((i) => i.name !== 'Etsy').map((i) => (
+        {otherItems.map((i) => (
           <div key={i.name} className="rounded-xl subtle-card p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-md bg-white/[0.05] border border-white/[0.08] flex items-center justify-center font-serif text-neutral-200">{i.initial}</div>

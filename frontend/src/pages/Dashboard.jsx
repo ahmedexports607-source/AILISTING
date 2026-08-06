@@ -57,8 +57,8 @@ export default function Dashboard() {
         </Panel>
         <Panel title="AI Working Status">
           <ul className="space-y-3">
-            {aiStatus.map((s, idx) => (
-              <li key={idx} className="flex items-start gap-3">
+            {aiStatus.map((s) => (
+              <li key={`${s.tag}-${s.text}-${s.sub}`} className="flex items-start gap-3">
                 <span className="mt-1.5 inline-block w-1.5 h-1.5 rounded-full bg-orange-500 pulse-dot" />
                 <div className="text-[13px] leading-snug">
                   <span className="text-orange-400">{s.tag}</span>
@@ -74,8 +74,8 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <Panel title="Pending Work">
           <ul className="space-y-3">
-            {pendingWork.map((t, i) => (
-              <li key={i} className="flex items-center justify-between gap-3">
+            {pendingWork.map((t) => (
+              <li key={t.title} className="flex items-center justify-between gap-3">
                 <label className="flex items-center gap-3 text-[13px] text-neutral-300 cursor-pointer">
                   <Checkbox className="border-neutral-600" />
                   <span>{t.title}</span>
@@ -89,8 +89,8 @@ export default function Dashboard() {
 
         <Panel title={<span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-orange-500" />Inventory Alerts</span>}>
           <ul className="space-y-3">
-            {inventoryAlerts.map((a, i) => (
-              <li key={i} className="flex items-center justify-between text-[13px]">
+            {inventoryAlerts.map((a) => (
+              <li key={a.name} className="flex items-center justify-between text-[13px]">
                 <span className="text-neutral-300">{a.name}</span>
                 <span className={`text-[11px] ${a.left === 0 ? 'text-red-400' : 'text-orange-500'}`}>{a.left} left</span>
               </li>

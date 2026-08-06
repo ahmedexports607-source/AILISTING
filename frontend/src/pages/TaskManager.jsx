@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Plus, ListChecks } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -15,6 +15,12 @@ export default function TaskManager() {
     setItems((prev) => [{ id: `t${Date.now()}`, title, assignee: 'Task Manager', due: 'Today', level: 'MEDIUM', done: false }, ...prev]);
     setTitle('');
   };
+
+  const grouped = useMemo(() => ({
+    HIGH: items.filter((t) => t.level === 'HIGH'),
+    MEDIUM: items.filter((t) => t.level === 'MEDIUM'),
+    LOW: items.filter((t) => t.level === 'LOW'),
+  }), [items]);
 
   const groups = [
     { key: 'HIGH', label: 'High priority' },
@@ -40,25 +46,28 @@ export default function TaskManager() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {groups.map((g) => (
-          <div key={g.key} className="rounded-xl subtle-card p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="font-serif text-lg text-neutral-100">{g.label}</div>
-              <div className="text-[10px] tracking-[0.22em] text-neutral-500">{items.filter((t) => t.level === g.key).length} TASKS</div>
+        {groups.map((g) => {
+          const list = grouped[g.key];
+          return (
+            <div key={g.key} className="rounded-xl subtle-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="font-serif text-lg text-neutral-100">{g.label}</div>
+                <div className="text-[10px] tracking-[0.22em] text-neutral-500">{list.length} TASKS</div>
+              </div>
+              <ul className="space-y-3">
+                {list.map((t) => (
+                  <li key={t.id} className="flex items-start gap-3">
+                    <Checkbox checked={t.done} onCheckedChange={() => toggle(t.id)} className="border-neutral-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className={`text-[13px] ${t.done ? 'line-through text-neutral-500' : 'text-neutral-200'}`}>{t.title}</div>
+                      <div className="text-[11px] text-neutral-500 mt-0.5">{t.assignee} · due {t.due}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-3">
-              {items.filter((t) => t.level === g.key).map((t) => (
-                <li key={t.id} className="flex items-start gap-3">
-                  <Checkbox checked={t.done} onCheckedChange={() => toggle(t.id)} className="border-neutral-600 mt-0.5" />
-                  <div className="flex-1">
-                    <div className={`text-[13px] ${t.done ? 'line-through text-neutral-500' : 'text-neutral-200'}`}>{t.title}</div>
-                    <div className="text-[11px] text-neutral-500 mt-0.5">{t.assignee} · due {t.due}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

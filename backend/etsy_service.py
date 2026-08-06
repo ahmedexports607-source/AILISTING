@@ -95,6 +95,7 @@ class DraftPayload(BaseModel):
     when_made: str = "made_to_order"
     taxonomy_id: int = 68887262  # "Craft Supplies & Tools > Fabric & Notions > Fabric" fallback
     image_url: Optional[str] = None  # optional; if provided we'll upload it after creation
+    image_id: Optional[str] = None   # id from magic_service image_store
 
 
 def build_router(db_getter) -> APIRouter:
@@ -266,12 +267,23 @@ def build_router(db_getter) -> APIRouter:
         listing_id = data.get("listing_id")
 
         image_uploaded = False
-        if payload.image_url and listing_id:
+        if listing_id and (payload.image_url or payload.image_id):
             try:
-                async with httpx.AsyncClient(timeout=40) as client:
-                    img_resp = await client.get(payload.image_url)
-                if img_resp.status_code == 200:
-                    files = {"image": ("photo.jpg", img_resp.content, img_resp.headers.get("content-type", "image/jpeg"))}
+                image_bytes = None
+                image_mime = "image/jpeg"
+                if payload.image_id:
+                    from magic_service import get_image_store
+                    store = get_image_store()
+                    if payload.image_id in store:
+                        image_mime, image_bytes = store[payload.image_id]
+                if image_bytes is None and payload.image_url:
+                    async with httpx.AsyncClient(timeout=40) as client:
+                        img_resp = await client.get(payload.image_url)
+                    if img_resp.status_code == 200:
+                        image_bytes = img_resp.content
+                        image_mime = img_resp.headers.get("content-type", "image/jpeg")
+                if image_bytes:
+                    files = {"image": ("photo.jpg", image_bytes, image_mime)}
                     async with httpx.AsyncClient(timeout=60) as client:
                         up = await client.post(
                             f"{ETSY_API}/application/shops/{shop_id}/listings/{listing_id}/images",

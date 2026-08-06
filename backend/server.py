@@ -73,6 +73,10 @@ app.include_router(api_router)
 from etsy_service import build_router as _build_etsy_router
 app.include_router(_build_etsy_router(lambda: db))
 
+# Magic Listing (vision LLM)
+from magic_service import build_router as _build_magic_router, get_image_store
+app.include_router(_build_magic_router(get_image_store()))
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

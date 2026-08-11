@@ -194,7 +194,7 @@ def build_router(db_getter) -> APIRouter:
                 if isinstance(data, dict) and data.get("shop_id"):
                     shop_id = data["shop_id"]
                     shop_name = data.get("shop_name")
-                elif isinstance(data, dict) and data.get("results"):
+                elif isinstance(data, dict) and data.get("results") and len(data["results"]) > 0:
                     shop_id = data["results"][0]["shop_id"]
                     shop_name = data["results"][0].get("shop_name")
         except Exception:
@@ -263,7 +263,12 @@ def build_router(db_getter) -> APIRouter:
             )
         if r.is_error:
             raise HTTPException(r.status_code, f"Etsy create listing error: {r.text}")
-        data = r.json()
+        
+        try:
+            data = r.json()
+        except Exception:
+            raise HTTPException(502, "Invalid response from Etsy API")
+        
         listing_id = data.get("listing_id")
 
         image_uploaded = False
@@ -339,7 +344,12 @@ def build_router(db_getter) -> APIRouter:
             )
         if r.is_error:
             raise HTTPException(r.status_code, f"Etsy create listing error: {r.text}")
-        data = r.json()
+        
+        try:
+            data = r.json()
+        except Exception:
+            raise HTTPException(502, "Invalid response from Etsy API")
+        
         listing_id = data.get("listing_id")
 
         image_uploaded = False

@@ -32,7 +32,7 @@ class StatusCheck(BaseModel):
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime
 
 class StatusCheckCreate(BaseModel):
     client_name: str
@@ -45,6 +45,7 @@ async def root():
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.model_dump()
+    status_dict['timestamp'] = datetime.now(timezone.utc)
     status_obj = StatusCheck(**status_dict)
     
     # Convert to dict and serialize datetime to ISO string for MongoDB
@@ -95,3 +96,4 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
